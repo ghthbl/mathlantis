@@ -1,0 +1,121 @@
+import random
+from fractions import Fraction
+
+class Card:
+  def __init__(self, card_type, health, attack, defense):
+      self.card_type = card_type
+      self.health = health
+      self.attack = attack
+      self.defense = defense
+      self.initial_health = health
+
+  def reset_health(self):
+      self.health = self.initial_health
+
+  def is_active(self):
+      return self.health > 0
+
+  def __lt__(self, other):
+      # This defines that a Card is 'less than' another Card if its attack is lower
+      return self.attack < other.attack
+
+
+class Monster:
+    def __init__(self, health, attack, defense, weaknesses, strengths):
+        self.health = health
+        self.attack = attack
+        self.defense = defense
+        self.weaknesses = weaknesses
+        self.strengths = strengths
+
+    def apply_weakness(self, player_card):
+        for weakness in self.weaknesses:
+            if player_card.card_type == weakness[0]:
+                if weakness[1] == 'attack':
+                    self.attack *= (1 - weakness[2])
+                elif weakness[1] == 'defense':
+                    self.defense *= (1 - weakness[2])
+
+    def apply_strength(self, player_card):
+        for strength in self.strengths:
+            if player_card.card_type == strength[0]:
+                if strength[1] == 'attack':
+                    self.attack *= (1 + strength[2])
+                elif strength[1] == 'defense':
+                    self.defense *= (1 + strength[2])
+
+def coin_flip_to_binary():
+    return ''.join(str(random.randint(0, 1)) for _ in range(3))
+
+def binary_to_value(binary_string):
+    return int(binary_string, 2)
+
+def simulate_battle(players_cards, monster, rounds=20):
+    monster_wins = 0
+    players_wins = [0, 0, 0]  # Wins for player 1, 2, and 3
+
+    for _ in range(rounds):
+        # Reset health at the start of each game
+        for player_cards in players_cards:
+            for card in player_cards:
+                card.reset_health()
+        monster_health = monster.health
+
+        while any(card.is_active() for player_cards in players_cards for card in player_cards) and monster_health > 0:
+            # Determine the turn order with a coin flip
+            monster_roll = binary_to_value(coin_flip_to_binary())
+            player_rolls = [[binary_to_value(coin_flip_to_binary()) if card.is_active() else 0 for card in player_cards] for player_cards in players_cards]
+
+            # Check for special case of triple 1's
+            if monster_roll == 7:
+                monster_health -= sum(1 for player_cards in players_cards for card in player_cards if card.is_active())
+            for rolls in player_rolls:
+                for roll, card in zip(rolls, player_cards):
+                    if roll == 7 and card.is_active():
+                        monster_health -= 1
+
+            # Determine who attacks first
+            if monster_roll >= max(roll for rolls in player_rolls for roll in rolls):
+                # Monster attacks each player's active card
+                for player_cards in players_cards:
+                    for card in player_cards:
+                        if card.is_active():
+                            monster.apply_weakness(card)
+                            monster.apply_strength(card)
+                            if monster.attack > card.defense:
+                                card.health -= (monster.attack - card.defense)
+            else:
+                # Players attack the monster sequentially
+                for player_cards, rolls in zip(players_cards, player_rolls):
+                    for roll, card in sorted(zip(rolls, player_cards), reverse=True):
+                        if card.is_active():
+                            if card.attack > monster.defense:
+                                monster_health -= (card.attack - monster.defense)
+
+        # Determine the winner of the round
+        if monster_health > 0:
+            monster_wins += 1
+        else:
+            for i, player_cards in enumerate(players_cards):
+                if any(card.is_active() for card in player_cards):
+                    players_wins[i] += 1
+
+    # Calculate average surviving cards for each player
+    average_surviving_cards = [sum(1 for card in player_cards if card.is_active()) / rounds for player_cards in players_cards]
+
+    return monster_wins, average_surviving_cards
+
+# Example usage:
+# Card initialization [type, health, attack, defense]
+players_cards = [
+    [Card(1, 3, 420, 360), Card(2, 4, 360, 240), Card(3, 3, 420, 360)],
+    [Card(3, 5, 300, 360), Card(4, 4, 300, 420), Card(5, 3, 420, 240)],
+    [Card(4, 3, 360, 360), Card(1, 5, 360, 420), Card(3, 4, 240, 420)]
+]
+# monster initialization [health, attack, defense, (strenght/weaknesses)]
+monster = Monster(15, 420, 420, weaknesses=[(1, 'defense', Fraction(1, 7)), (2, 'attack', Fraction(1, 4))],
+                  strengths=[(4, 'defense', Fraction(2, 7)), (5, 'attack', Fraction(1, 5))])
+
+monster_wins, avg_surviving_cards = simulate_battle(players_cards, monster)
+print(f"Monster won {monster_wins} rounds.")
+print(f"Average surviving cards for Player 1, 2, and 3: {avg_surviving_cards}")
