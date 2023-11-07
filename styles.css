@@ -1,0 +1,33 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3 {
+    font-family: 'Cinzel', serif;
+}
+
+.math-content {
+    font-family: 'Source Code Pro', monospace;
+}
+
+.fantasy-content {
+    font-family: 'Tangerine', cursive;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+main {
+    padding: 1rem;
+}
+
+button {
+    margin: 0.5rem;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
