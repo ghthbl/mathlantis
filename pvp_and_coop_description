@@ -1,0 +1,86 @@
+Initiating a PvP battle:
+Determine the First Attacker:
+Each card (Card1 and Card2) participates in a coin flip simulation, which is represented by generating a 3-bit binary number (e.g., '101'). This is done by flipping a coin three times where heads represent '1' and tails '0'.
+Convert the binary numbers to their decimal equivalents.
+Compare the decimal values. The card with the higher value wins the coin flip and becomes the attacker for the first round. If there's a tie, repeat the coin flips until there's a clear winner.
+Conducting the Battle:
+Reset Health:
+
+At the start of the battle, reset both cards' health to their initial values.
+Battle Rounds:
+
+Each round consists of the following steps:
+The attacker and defender are determined from the initial coin flip.
+Both the attacker and defender simulate a coin flip again to generate a new 3-bit binary number for the current round.
+Convert these binary numbers to decimal to determine the attack and defense strengths.
+Multiply the attacker's roll by the attacker's attack value to get the attack strength.
+Multiply the defender's roll by the defender's defense value to get the defense strength.
+Apply type modifiers based on the card types (e.g., type1 gains a bonus against type3).
+Special Rolls:
+
+If the attacker rolls a '111' (which is '7' in decimal), the defender loses one health point regardless of the defense strength.
+If the defender rolls a '111', the attacker loses one health point regardless of the attack strength.
+Damage Calculation:
+
+If neither card rolled a '111', compare the attack strength to the defense strength.
+If the attack strength is greater than the defense strength, the defender loses one health point.
+If the defense strength is equal to or greater than the attack strength, no health is lost by the defender.
+Role Switching:
+
+After each round, switch roles so the attacker becomes the defender and vice versa.
+Repeat Rounds:
+
+Continue the rounds until one card's health drops to 0.
+
+
+Battle Rules: Monster Card Showdown
+
+Objective:
+Defeat the monster card before it defeats all of your cards. Each player can have up to three cards in play.
+
+Setup:
+
+Each player selects up to three cards, each with specified health, attack, defense, and type.
+The monster card is defined with health, attack, defense, and specific weaknesses and strengths against certain types and attributes.
+Determining the Starting Player:
+
+Each card and the monster perform a triple coin toss at the start of the battle.
+These tosses are translated into a binary number ranging from 0 to 7, where three heads (111) is the highest possible roll.
+The highest roll determines the starting attacker. In case of a tie, repeat the coin toss for the tied cards.
+Turn Order:
+
+The game alternates between player turns and the monster's turn.
+If multiple players are active, they take turns in a clockwise order.
+Player's Turn:
+
+On their turn, a player can attack with their active card.
+If a player has more than one card, they must choose which card to use for the attack.
+The attack's effectiveness is determined by comparing the card's attack value with the monster's defense value, considering any type-related strengths or weaknesses.
+Special roll: If the player rolls a 111, the monster incurs an automatic point of damage.
+Monster's Turn:
+
+On the monster's turn, it attacks each player's active card.
+The monster's attack is compared against the defense of each card, with type modifiers applied.
+Special roll: If the monster rolls a 111, each player's active card incurs an automatic point of damage.
+Damage Calculation:
+
+If the attacker's roll, multiplied by their attack value, exceeds the defender's roll, multiplied by their defense value, the defender takes a point of damage.
+Health points are deducted accordingly.
+End of Turn:
+
+After the monster and all players have taken their turns, check the health of all participants.
+If the monster's health is 0, the players win.
+If all of a player's cards reach 0 health, that player is out of the game.
+The game ends when either the monster is defeated or all players' cards are defeated.
+Winning the Game:
+
+The players win if the monster's health reaches 0.
+The monster wins if it depletes the health of all players' cards.
+Modifiers:
+
+Certain types of player cards are stronger or weaker against the monster, as defined by the monster's attributes.
+Weaknesses and strengths are applied as fractional modifiers to the monster's attack or defense when battling against specific types.
+Gameplay Notes:
+
+Players should strategize which card to use based on the monster's known weaknesses and strengths.
+Cooperation and planning are key in a multiplayer setting to effectively use each card's strengths
