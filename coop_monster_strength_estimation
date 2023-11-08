@@ -1,121 +1,155 @@
 import random
-from fractions import Fraction
 
+# Constants for the simulation
+NUM_ROUNDS = 100
+MAX_PLAYERS = 3
+NUM_PLAYER_CARDS = 3
+
+# Helper function to simulate a triple coin flip
+def triple_coin_flip():
+    return random.randint(0, 7)  # 0 to 7 represents 000 to 111 in binary
+
+# Define the Card class
 class Card:
-  def __init__(self, card_type, health, attack, defense):
-      self.card_type = card_type
-      self.health = health
-      self.attack = attack
-      self.defense = defense
-      self.initial_health = health
-
-  def reset_health(self):
-      self.health = self.initial_health
-
-  def is_active(self):
-      return self.health > 0
-
-  def __lt__(self, other):
-      # This defines that a Card is 'less than' another Card if its attack is lower
-      return self.attack < other.attack
-
-
-class Monster:
-    def __init__(self, health, attack, defense, weaknesses, strengths):
-        self.health = health
+    def __init__(self, card_type, health, attack, defense):
+        self.card_type = card_type
+        self.health = health * 1  # Assuming health in the stats is a multiplier of 1
         self.attack = attack
         self.defense = defense
-        self.weaknesses = weaknesses
+        self.original_health = self.health  # To reset health after each round
+
+    def reset_health(self):
+        self.health = self.original_health
+
+# Define the Monster class
+class Monster(Card):
+    def __init__(self, health, attack, defense, strengths, weaknesses):
+        super().__init__('monster', health, attack, defense)
         self.strengths = strengths
+        self.weaknesses = weaknesses
 
-    def apply_weakness(self, player_card):
-        for weakness in self.weaknesses:
-            if player_card.card_type == weakness[0]:
-                if weakness[1] == 'attack':
-                    self.attack *= (1 - weakness[2])
-                elif weakness[1] == 'defense':
-                    self.defense *= (1 - weakness[2])
-
-    def apply_strength(self, player_card):
-        for strength in self.strengths:
-            if player_card.card_type == strength[0]:
-                if strength[1] == 'attack':
-                    self.attack *= (1 + strength[2])
-                elif strength[1] == 'defense':
-                    self.defense *= (1 + strength[2])
-
-def coin_flip_to_binary():
-    return ''.join(str(random.randint(0, 1)) for _ in range(3))
-
-def binary_to_value(binary_string):
-    return int(binary_string, 2)
-
-def simulate_battle(players_cards, monster, rounds=20):
-    monster_wins = 0
-    players_wins = [0, 0, 0]  # Wins for player 1, 2, and 3
-
-    for _ in range(rounds):
-        # Reset health at the start of each game
-        for player_cards in players_cards:
-            for card in player_cards:
-                card.reset_health()
-        monster_health = monster.health
-
-        while any(card.is_active() for player_cards in players_cards for card in player_cards) and monster_health > 0:
-            # Determine the turn order with a coin flip
-            monster_roll = binary_to_value(coin_flip_to_binary())
-            player_rolls = [[binary_to_value(coin_flip_to_binary()) if card.is_active() else 0 for card in player_cards] for player_cards in players_cards]
-
-            # Check for special case of triple 1's
-            if monster_roll == 7:
-                monster_health -= sum(1 for player_cards in players_cards for card in player_cards if card.is_active())
-            for rolls in player_rolls:
-                for roll, card in zip(rolls, player_cards):
-                    if roll == 7 and card.is_active():
-                        monster_health -= 1
-
-            # Determine who attacks first
-            if monster_roll >= max(roll for rolls in player_rolls for roll in rolls):
-                # Monster attacks each player's active card
-                for player_cards in players_cards:
-                    for card in player_cards:
-                        if card.is_active():
-                            monster.apply_weakness(card)
-                            monster.apply_strength(card)
-                            if monster.attack > card.defense:
-                                card.health -= (monster.attack - card.defense)
-            else:
-                # Players attack the monster sequentially
-                for player_cards, rolls in zip(players_cards, player_rolls):
-                    for roll, card in sorted(zip(rolls, player_cards), reverse=True):
-                        if card.is_active():
-                            if card.attack > monster.defense:
-                                monster_health -= (card.attack - monster.defense)
-
-        # Determine the winner of the round
-        if monster_health > 0:
-            monster_wins += 1
-        else:
-            for i, player_cards in enumerate(players_cards):
-                if any(card.is_active() for card in player_cards):
-                    players_wins[i] += 1
-
-    # Calculate average surviving cards for each player
-    average_surviving_cards = [sum(1 for card in player_cards if card.is_active()) / rounds for player_cards in players_cards]
-
-    return monster_wins, average_surviving_cards
-
-# Example usage:
-# Card initialization [type, health, attack, defense]
-players_cards = [
-    [Card(1, 3, 420, 360), Card(2, 4, 360, 240), Card(3, 3, 420, 360)],
-    [Card(3, 5, 300, 360), Card(4, 4, 300, 420), Card(5, 3, 420, 240)],
-    [Card(4, 3, 360, 360), Card(1, 5, 360, 420), Card(3, 4, 240, 420)]
+# Initialize player cards with the stats provided
+player_cards = [
+    Card('type4', 4, 300, 360),
+    Card('type2', 4, 420, 240),
+    Card('type1', 4, 300, 360),
+    Card('type1', 4, 360, 300),
+    Card('type4', 4, 360, 300),
+    Card('type4', 4, 420, 240),
+    Card('type2', 4, 300, 360),
+    Card('type1', 4, 420, 240),
+    Card('type3', 4, 420, 240),
+    Card('type5', 4, 360, 300),
+    Card('type5', 4, 420, 240),
+    Card('type2', 4, 360, 300),
+    Card('type4', 5, 240, 240),
+    Card('type1', 5, 240, 240),
+    Card('type3', 4, 240, 420),
+    Card('type5', 5, 240, 240),
+    Card('type2', 4, 240, 420),
+    Card('type3', 5, 240, 240),
+    Card('type5', 4, 240, 420),
+    Card('type1', 4, 240, 420),
+    Card('type4', 4, 240, 420),
+    Card('type5', 4, 300, 300),
+    Card('type2', 5, 240, 240),
+    Card('type1', 4, 300, 300),
+    Card('type3', 4, 240, 360),
+    Card('type4', 4, 300, 300),
+    Card('type4', 4, 240, 360),
+    Card('type5', 4, 360, 240),
+    Card('type4', 4, 360, 240),
+    Card('type2', 4, 300, 300),
+    Card('type2', 4, 360, 240),
+    Card('type1', 4, 360, 240),
+    Card('type3', 3, 420, 420),
+    Card('type2', 3, 420, 420),
+    Card('type3', 4, 300, 300),
+    Card('type3', 4, 360, 240),
+    Card('type2', 4, 240, 360),
+    Card('type5', 4, 240, 360),
+    Card('type5', 3, 420, 420),
+    Card('type1', 3, 420, 420),
+    Card('type4', 3, 420, 420),
+    Card('type2', 3, 420, 360),
+    Card('type1', 4, 240, 360),
+    Card('type3', 3, 360, 420),
+    Card('type3', 3, 420, 360),
+    Card('type1', 4, 300, 240),
+    Card('type4', 3, 420, 360),
+    Card('type5', 3, 360, 420),
 ]
-# monster initialization [health, attack, defense, (strenght/weaknesses)]
-monster = Monster(15, 420, 420, weaknesses=[(1, 'defense', Fraction(1, 7)), (2, 'attack', Fraction(1, 4))],
-                  strengths=[(4, 'defense', Fraction(2, 7)), (5, 'attack', Fraction(1, 5))])
 
-monster_wins, avg_surviving_cards = simulate_battle(players_cards, monster)
-print(f"Monster won {monster_wins} rounds.")
-print(f"Average surviving cards for Player 1, 2, and 3: {avg_surviving_cards}")
+# Initialize monster card with placeholder stats
+# Weaknesses influence game disproptionally
+monster = Monster(
+    health=25,
+    attack=540,
+    defense=540,
+    strengths={'type1': 1.25, 'type2': 1.5},  # Example: Stronger against type1 and type2
+    weaknesses={'type3': 0, 'type4': 0}   # Example: Weaker against type3 and type4
+)
+
+# Function to simulate a battle
+def battle(player_card, monster):
+    player_roll = triple_coin_flip()
+    monster_roll = triple_coin_flip()
+
+    # Calculate player's effective attack and monster's effective defense
+    player_attack = player_card.attack * player_roll
+    monster_defense = monster.defense * monster_roll
+
+    # Apply type-related strengths or weaknesses
+    if player_card.card_type in monster.strengths:
+        monster_defense *= monster.strengths[player_card.card_type]
+    if player_card.card_type in monster.weaknesses:
+        player_attack *= monster.weaknesses[player_card.card_type]
+
+    # Determine if damage is dealt
+    if player_attack > monster_defense:
+        monster.health -= 1
+    if monster_roll == 7:  # Special roll for monster
+        player_card.health -= 1
+
+# Function to simulate a round
+def simulate_round(players, monster):
+    for player in players:
+        for card in player:
+            battle(card, monster)
+            if card.health <= 0:
+                player.remove(card)
+
+# Function to simulate the game
+def simulate_game():
+    monster_wins = 0
+    player_card_counts = [0] * MAX_PLAYERS
+
+    for _ in range(NUM_ROUNDS):
+        # Reset health for all cards
+        for card in player_cards:
+            card.reset_health()
+        monster.reset_health()
+
+        # Initialize players with random cards
+        players = [random.sample(player_cards, NUM_PLAYER_CARDS) for _ in range(MAX_PLAYERS)]
+
+        # Simulate rounds until monster or all players are defeated
+        while monster.health > 0 and any(players):
+            simulate_round(players, monster)
+
+        # Check for winner
+        if monster.health <= 0:
+            for i, player in enumerate(players):
+                player_card_counts[i] += len(player)
+        else:
+            monster_wins += 1
+
+    # Calculate average remaining cards for each player
+    avg_remaining_cards = [count / NUM_ROUNDS for count in player_card_counts]
+
+    return monster_wins, avg_remaining_cards
+
+# Run the simulation and print the results
+monster_wins, avg_remaining_cards = simulate_game()
+print(f"Monster wins: {monster_wins}")
+print(f"Average remaining cards for each player: {avg_remaining_cards}")
