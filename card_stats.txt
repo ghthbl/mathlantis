@@ -1,0 +1,72 @@
+# 48 player cards
+
+Card general format:
+Type: [1 to 5]
+Health: [240 to 420]
+Defense: [240 to 420]
+Special effects (not modeled), only examples given here:
+  - lower 12: Always hit on enemy if two conditions in binary roll
+  - mid-low 12: Health reset to max if 1 condition in binary roll
+  - upper-low 12: Defense +80 if 2 conditions in binary roll
+  - upper 12: + 1/4 Attack vs monsters
+
+# Ranked from higher to lower in test run (wins is not part of stats, just wins in 1 vs 1 simulation)
+
+  Type: type4	 Health: 4	 Attack: 300	 Defense: 360	 Wins: 1244
+ Type: type2	 Health: 4	 Attack: 420	 Defense: 240	 Wins: 1238
+ Type: type1	 Health: 4	 Attack: 300	 Defense: 360	 Wins: 1237
+ Type: type1	 Health: 4	 Attack: 360	 Defense: 300	 Wins: 1231
+ Type: type4	 Health: 4	 Attack: 360	 Defense: 300	 Wins: 1228
+ Type: type4	 Health: 4	 Attack: 420	 Defense: 240	 Wins: 1227
+ Type: type2	 Health: 4	 Attack: 300	 Defense: 360	 Wins: 1218
+ Type: type1	 Health: 4	 Attack: 420	 Defense: 240	 Wins: 1214
+ Type: type3	 Health: 4	 Attack: 420	 Defense: 240	 Wins: 1214
+ Type: type5	 Health: 4	 Attack: 360	 Defense: 300	 Wins: 1213
+ Type: type5	 Health: 4	 Attack: 420	 Defense: 240	 Wins: 1188
+ Type: type2	 Health: 4	 Attack: 360	 Defense: 300	 Wins: 1186
+ Type: type4	 Health: 5	 Attack: 240	 Defense: 240	 Wins: 1179
+ Type: type1	 Health: 5	 Attack: 240	 Defense: 240	 Wins: 1175
+ Type: type3	 Health: 4	 Attack: 240	 Defense: 420	 Wins: 1168
+ Type: type5	 Health: 5	 Attack: 240	 Defense: 240	 Wins: 1164
+ Type: type2	 Health: 4	 Attack: 240	 Defense: 420	 Wins: 1158
+ Type: type3	 Health: 5	 Attack: 240	 Defense: 240	 Wins: 1155
+ Type: type5	 Health: 4	 Attack: 240	 Defense: 420	 Wins: 1154
+ Type: type1	 Health: 4	 Attack: 240	 Defense: 420	 Wins: 1153
+ Type: type4	 Health: 4	 Attack: 240	 Defense: 420	 Wins: 1147
+ Type: type5	 Health: 4	 Attack: 300	 Defense: 300	 Wins: 1134
+ Type: type2	 Health: 5	 Attack: 240	 Defense: 240	 Wins: 1132
+ Type: type1	 Health: 4	 Attack: 300	 Defense: 300	 Wins: 1131
+ Type: type3	 Health: 4	 Attack: 240	 Defense: 360	 Wins: 1129
+ Type: type4	 Health: 4	 Attack: 300	 Defense: 300	 Wins: 1123
+ Type: type4	 Health: 4	 Attack: 240	 Defense: 360	 Wins: 1117
+ Type: type5	 Health: 4	 Attack: 360	 Defense: 240	 Wins: 1114
+ Type: type4	 Health: 4	 Attack: 360	 Defense: 240	 Wins: 1111
+ Type: type2	 Health: 4	 Attack: 300	 Defense: 300	 Wins: 1105
+ Type: type2	 Health: 4	 Attack: 360	 Defense: 240	 Wins: 1103
+ Type: type1	 Health: 4	 Attack: 360	 Defense: 240	 Wins: 1102
+ Type: type3	 Health: 3	 Attack: 420	 Defense: 420	 Wins: 1101
+ Type: type2	 Health: 3	 Attack: 420	 Defense: 420	 Wins: 1098
+ Type: type3	 Health: 4	 Attack: 300	 Defense: 300	 Wins: 1096
+ Type: type3	 Health: 4	 Attack: 360	 Defense: 240	 Wins: 1096
+ Type: type2	 Health: 4	 Attack: 240	 Defense: 360	 Wins: 1085
+ Type: type5	 Health: 4	 Attack: 240	 Defense: 360	 Wins: 1083
+ Type: type5	 Health: 3	 Attack: 420	 Defense: 420	 Wins: 1081
+ Type: type1	 Health: 3	 Attack: 420	 Defense: 420	 Wins: 1077
+ Type: type4	 Health: 3	 Attack: 420	 Defense: 420	 Wins: 1072
+ Type: type2	 Health: 3	 Attack: 420	 Defense: 360	 Wins: 1064
+ Type: type1	 Health: 4	 Attack: 240	 Defense: 360	 Wins: 1055
+ Type: type3	 Health: 3	 Attack: 360	 Defense: 420	 Wins: 1036
+ Type: type3	 Health: 3	 Attack: 420	 Defense: 360	 Wins: 1026
+ Type: type1	 Health: 4	 Attack: 300	 Defense: 240	 Wins: 1020
+ Type: type4	 Health: 3	 Attack: 420	 Defense: 360	 Wins: 1020
+ Type: type5	 Health: 3	 Attack: 360	 Defense: 420	 Wins: 1000
+
+# Monster cards ranked from 1 to 6
+General format:
+Health:
+Attack:
+Defense:
+Strength1: + own attack [fraction] increase if type[1 to 5]
+Strength2: + own defense [fraction] increase if type[1 to 5]
+Weakness1: - own attack [fraction] decrease if type[1 to 5]
+Weakness2: - own defense [fraction] increase if type[1 to 5]
