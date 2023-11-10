@@ -1,15 +1,15 @@
-document.getElementById('inputForm').addEventListener('submit', function(event){
-    event.preventDefault();
+document.getElementById('inputForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevents default form submission
 
     const username = document.getElementById('username').value;
     const keyword = document.getElementById('keyword').value;
 
-    fetch('https://ghthbl.pythonanywhere.com', {
+    fetch('http://ghthbl.pythonanywhere.com/submit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, keyword }),
+        body: JSON.stringify({ username: username, keyword: keyword })
     })
     .then(response => response.text())
     .then(data => {
