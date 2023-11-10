@@ -4,7 +4,7 @@ document.getElementById('inputForm').addEventListener('submit', function(event){
     const username = document.getElementById('username').value;
     const keyword = document.getElementById('keyword').value;
 
-    fetch('https://replit.com/@thbl/test-backend?v=1/receive', {
+    fetch('ghthbl.pythonanywhere.com', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
