@@ -40,6 +40,6 @@ button {
 
 @media screen and (orientation: portrait) {
   .scratch-container {
-    padding-top: 75%; /* Adjust for 4:3 aspect ratio in portrait mode */
+    padding-top: 10%; /* Adjust for 4:3 aspect ratio in portrait mode */
   }
 }
