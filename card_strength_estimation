@@ -1,5 +1,7 @@
 import itertools
 import random
+import numpy as np
+import csv
 
 class Card:
     type_modifiers = {
@@ -18,6 +20,7 @@ class Card:
         self.attack = attack
         self.defense = defense
         self.wins = 0
+        self.turns_in_battles = []
 
     def reset_health(self):
         self.health = self.initial_health
@@ -64,37 +67,43 @@ def type_modifier(attacker, defender):
         return 0  # No advantage
 
 def simulate_battle(card1, card2):
-    card1.reset_health()
-    card2.reset_health()
+  card1.reset_health()
+  card2.reset_health()
+  turn_count = 0
 
-    attacker, defender = initiate_battle(card1, card2)
-    while card1.health > 0 and card2.health > 0:
-        attacker_roll = binary_to_value(coin_flip_to_binary())
-        defender_roll = binary_to_value(coin_flip_to_binary())
+  attacker, defender = initiate_battle(card1, card2)
+  while card1.health > 0 and card2.health > 0:
+      attacker_roll = binary_to_value(coin_flip_to_binary())
+      defender_roll = binary_to_value(coin_flip_to_binary())
 
-        # Calculate attack and defense strengths with type modifier
-        attack_strength = attacker_roll * attacker.attack + type_modifier(attacker, defender)
-        defense_strength = defender_roll * defender.defense + type_modifier(defender, attacker)
+      # Calculate attack and defense strengths with type modifier
+      attack_strength = attacker.get_attack_strength(attacker_roll) + type_modifier(attacker, defender)
+      defense_strength = defender.get_defense_strength(defender_roll) + type_modifier(defender, attacker)
 
-        if attacker_roll == 7:  # 111 in binary
-            defender.health -= 1
-        elif defender_roll == 7:  # 111 in binary
-            attacker.health -= 1
-        else:
-            if attack_strength > defense_strength:
-                defender.health -= 1
+      if attacker_roll == 7:  # Max roll value (111 in binary)
+          defender.health -= 1
+      elif defender_roll == 7:  # Max roll value (111 in binary)
+          attacker.health -= 1
+      else:
+          if attack_strength > defense_strength:
+              defender.health -= 1
+          turn_count += 1
 
-        attacker, defender = defender, attacker
+      attacker, defender = defender, attacker
 
-    if card1.health > 0:
-        card1.wins += 1
-    else:
-        card2.wins += 1
+  card1.turns_in_battles.append(turn_count)
+  card2.turns_in_battles.append(turn_count)
+
+  if card1.health > 0:
+      card1.wins += 1
+  else:
+      card2.wins += 1
+
 
 types = ['type1', 'type2', 'type3', 'type4', 'type5']
 health_values = [2, 3, 4]
-attack_values = [240, 300, 360, 420]
-defense_values = [240, 300, 360, 420]
+attack_values = [300, 360, 420, 460]
+defense_values = [300, 360, 420, 460]
 
 all_cards = [Card(f"card{index:03d}", t, h, a, d) for index, (t, h, a, d) in enumerate(itertools.product(types, health_values, attack_values, defense_values))]
 
@@ -118,20 +127,42 @@ sorted_cards = sorted(all_cards, key=lambda x: x.wins, reverse=True)
 median_index = len(sorted_cards) // 2
 median_wins = sorted_cards[median_index].wins
 
-# Get the 75 cards on each side of the median, if there are enough cards
-lower_bound = max(0, median_index - 75)
-upper_bound = min(len(sorted_cards), median_index + 75 + 1)  # +1 because the upper bound is exclusive
+# Get the n number of cards on each side of the median, if there are enough cards
+n = 150
+lower_bound = max(0, median_index - n)
+upper_bound = min(len(sorted_cards), median_index + n + 1)  # +1 because the upper bound is exclusive
 cards_around_median = sorted_cards[lower_bound:upper_bound]
 
 # Display the results
 print("Card Rankings by Wins:")
-for card in sorted_cards:
-    print(card)
+card_index = 0
+#for card in cards_around_median:
+#    card_index += 1
+#    turns_array = np.array(card.turns_in_battles)
+#    median_turns = np.median(turns_array)
+#    iqr_turns = np.percentile(turns_array, 75) - np.percentile(turns_array, 25)
+#    range_turns = turns_array.max() - turns_array.min()
+#    print(f"{card_index}. Card: {card.name}, Tp: {card.card_type}, Hlth: {card.initial_health}, "f"Att: {card.attack}, Def: {card.defense}, Wins: {card.wins}, "f"medTurns: {median_turns}, IQR: {iqr_turns}, Rng: {range_turns}")
+with open('card_details.csv', 'w', newline='') as file:
+  writer = csv.writer(file)
+  # Write the header row
+  writer.writerow(['Index', 'Card Name', 'Type', 'Initial Health', 'Attack', 'Defense', 'Wins', 'Median Turns', 'IQR', 'Range'])
+
+
+  for card in cards_around_median:
+      turns_array = np.array(card.turns_in_battles)
+      median_turns = np.median(turns_array)
+      iqr_turns = np.percentile(turns_array, 75) - np.percentile(turns_array, 25)
+      range_turns = turns_array.max() - turns_array.min()
+
+      card_index += 1
+      # Write each card's data as a row in the CSV file
+      writer.writerow([card_index, card.name, card.card_type, card.initial_health, card.attack, card.defense, card.wins, median_turns, iqr_turns, range_turns])
 
 # Output the median number of wins
 print(f"\nMedian number of wins: {median_wins}")
 
 # Output the 75 cards to each side of the median value
-print("\n75 cards to each side of the median value:")
-for card in cards_around_median:
-    print(card)
+#print("\n75 cards to each side of the median value:")
+#for card in cards_around_median:
+#    print(card)
