@@ -4,7 +4,7 @@ document.getElementById('inputForm').addEventListener('submit', function(e) {
     const username = document.getElementById('username').value;
     const keyword = document.getElementById('keyword').value;
 
-    fetch('http://ghthbl.pythonanywhere.com/submit', {
+    fetch('https://ghthbl.pythonanywhere.com/submit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
