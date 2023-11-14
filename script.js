@@ -37,15 +37,15 @@ document.getElementById('closeIframe').addEventListener('click', function() {
 
 document.getElementById('loadIframe').addEventListener('click', function() {
     var iframeHTML = '<iframe src="https://scratch.mit.edu/projects/924020428/embed" allowtransparency="true" width="485" height="402" frameborder="0" scrolling="no" allowfullscreen></iframe>';
-    document.getElementById('iframeContainer').innerHTML = iframeHTML;
-    document.getElementById('iframeContainer').style.display = 'block';
+    document.getElementById('iframeContainer2').innerHTML = iframeHTML;
+    document.getElementById('iframeContainer2').style.display = 'block';
     this.style.display = 'none';
     document.getElementById('closeIframe').style.display = 'block';
 });
 
 document.getElementById('closeIframe').addEventListener('click', function() {
-    document.getElementById('iframeContainer').innerHTML = '';
-    document.getElementById('iframeContainer').style.display = 'none';
+    document.getElementById('iframeContainer2').innerHTML = '';
+    document.getElementById('iframeContainer2').style.display = 'none';
     this.style.display = 'none';
     document.getElementById('loadIframe').style.display = 'block';
 });
