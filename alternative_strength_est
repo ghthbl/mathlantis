@@ -1,0 +1,173 @@
+# alternative stats:
+# numbers are 960, 1080, 1200, 1440, 1500, 1620, 1800, 1920 that all
+# contain factors 2,2,3,5, covering all results from dice roll
+
+import itertools
+import random
+import numpy as np
+import csv
+
+class Card:
+    type_modifiers = {
+        'type1': {'attack': 1.1, 'defense': 0.9},
+        'type2': {'attack': 1.0, 'defense': 1.0},
+        'type3': {'attack': 0.9, 'defense': 1.1},
+        'type4': {'attack': 1.2, 'defense': 0.8},
+        'type5': {'attack': 0.8, 'defense': 1.2},
+    }
+
+    def __init__(self, name, card_type, health, attack, defense):
+        self.name = name
+        self.card_type = card_type
+        self.initial_health = health
+        self.health = health
+        self.attack = attack
+        self.defense = defense
+        self.wins = 0
+        self.turns_in_battles = []
+
+    def reset_health(self):
+        self.health = self.initial_health
+
+    def __repr__(self):
+        return (f"Card Name: {self.name}, "
+                f"Type: {self.card_type}, "
+                f"Initial Health: {self.initial_health}, "
+                f"Attack: {self.attack}, "
+                f"Defense: {self.defense}, "
+                f"Wins: {self.wins}")
+
+    def get_attack_strength(self, roll):
+        return roll * self.attack * self.type_modifiers[self.card_type]['attack']
+
+    def get_defense_strength(self, roll):
+        return roll * self.defense * self.type_modifiers[self.card_type]['defense']
+
+def coin_flip_to_binary():
+    return ''.join(str(random.randint(0, 1)) for _ in range(3))
+
+def binary_to_value(binary_string):
+    return int(binary_string, 2)
+
+def initiate_battle(card1, card2):
+    while True:
+        card1_roll = coin_flip_to_binary()
+        card2_roll = coin_flip_to_binary()
+        if card1_roll != card2_roll:
+            return (card1, card2) if binary_to_value(card1_roll) > binary_to_value(card2_roll) else (card2, card1)
+
+
+def type_modifier(attacker, defender):
+    type_advantages = {
+        'type1': 'type3',
+        'type2': 'type4',
+        'type3': 'type5',
+        'type4': 'type1',
+        'type5': 'type2',
+    }
+    if type_advantages[attacker.card_type] == defender.card_type:
+        return 70  # Attacker has advantage over defender
+    else:
+        return 0  # No advantage
+
+def simulate_battle(card1, card2):
+  card1.reset_health()
+  card2.reset_health()
+  turn_count = 0
+
+  attacker, defender = initiate_battle(card1, card2)
+  while card1.health > 0 and card2.health > 0:
+      attacker_roll = binary_to_value(coin_flip_to_binary())
+      defender_roll = binary_to_value(coin_flip_to_binary())
+
+      # Calculate attack and defense strengths with type modifier
+      attack_strength = attacker.get_attack_strength(attacker_roll) + type_modifier(attacker, defender)
+      defense_strength = defender.get_defense_strength(defender_roll) + type_modifier(defender, attacker)
+
+      if attacker_roll == 7:  # Max roll value (111 in binary)
+          defender.health -= 1
+      elif defender_roll == 7:  # Max roll value (111 in binary)
+          attacker.health -= 1
+      else:
+          if attack_strength > defense_strength:
+              defender.health -= 1
+          turn_count += 1
+
+      attacker, defender = defender, attacker
+
+  card1.turns_in_battles.append(turn_count)
+  card2.turns_in_battles.append(turn_count)
+
+  if card1.health > 0:
+      card1.wins += 1
+  else:
+      card2.wins += 1
+
+
+types = ['type1', 'type2', 'type3', 'type4', 'type5']
+health_values = [2, 3, 4, 5]
+attack_values = [960, 1080, 1200, 1440, 1500, 1620, 1800, 1920]
+defense_values =  [960, 1080, 1200, 1440, 1500, 1620, 1800, 1920]
+# all contain 2 and 3 as factors
+
+all_cards = [Card(f"card{index:03d}", t, h, a, d) for index, (t, h, a, d) in enumerate(itertools.product(types, health_values, attack_values, defense_values))]
+
+total_battles = len(all_cards) * (len(all_cards) - 1) // 2
+battle_counter = 0
+
+print(f"Starting simulation of {total_battles} battles.")
+
+for i, card1 in enumerate(all_cards):
+    for j, card2 in enumerate(all_cards[i+1:], start=i+1):
+        simulate_battle(card1, card2)
+        battle_counter += 1
+        print(f"Battle {battle_counter}/{total_battles} completed.")
+
+print("Simulation complete.")
+
+# Sort cards by the number of wins
+sorted_cards = sorted(all_cards, key=lambda x: x.wins, reverse=True)
+
+# Calculate the median number of wins
+median_index = len(sorted_cards) // 2
+median_wins = sorted_cards[median_index].wins
+
+# Get the n number of cards on each side of the median, if there are enough cards
+n = 300
+lower_bound = max(0, median_index - n)
+upper_bound = min(len(sorted_cards), median_index + n + 1)  # +1 because the upper bound is exclusive
+cards_around_median = sorted_cards[lower_bound:upper_bound]
+
+# Display the results
+print("Card Rankings by Wins:")
+card_index = 0
+for card in cards_around_median:
+    card_index += 1
+    turns_array = np.array(card.turns_in_battles)
+    median_turns = np.median(turns_array)
+    iqr_turns = np.percentile(turns_array, 75) - np.percentile(turns_array, 25)
+    range_turns = turns_array.max() - turns_array.min()
+    print(f"{card_index}. Card: {card.name}, Tp: {card.card_type}, Hlth: {card.initial_health}, "f"Att: {card.attack}, Def: {card.defense}, Wins: {card.wins}, "f"medTurns: {median_turns}, IQR: {iqr_turns}, Rng: {range_turns}")
+#with open('card_details.csv', 'w', newline='') as file:
+  #writer = csv.writer(file)
+  # Write the header row
+  #writer.writerow(['Index', 'Card Name', 'Type', 'Initial Health', 'Attack', 'Defense', 'Wins', 'Median Turns', 'IQR', 'Range'])
+
+
+for card in cards_around_median:
+      turns_array = np.array(card.turns_in_battles)
+      median_turns = np.median(turns_array)
+      iqr_turns = np.percentile(turns_array, 75) - np.percentile(turns_array, 25)
+      range_turns = turns_array.max() - turns_array.min()
+
+      card_index += 1
+      # Write each card's data as a row in the CSV file
+      # writer.writerow([card_index, card.name, card.card_type, card.initial_health, card.attack, card.defense, card.wins, median_turns, iqr_turns, range_turns])
+
+# Output the median number of wins
+print(f"\nMedian number of wins: {median_wins}")
+
+# Output the 75 cards to each side of the median value
+print("\n75 cards to each side of the median value:")
+for card in cards_around_median:
+    print(card)
