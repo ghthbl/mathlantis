@@ -1,0 +1,49 @@
+Revised Progression for Card Complexity
+
+Stage 1: Basic Math with Multiplication and Binary Rolls
+Initial Cards: Emphasize basic multiplication skills, crucial for understanding attack calculations.
+Three-Bit Roll: Introduce the 3-bit binary roll mechanism from the beginning for consistent gameplay.
+Simple Attack/Defense Values: Use values like 960, 1080, 1200, etc., that have multiple factors for flexibility in gameplay and later educational content.
+Type Advantage: Simple type dynamics, using a rock-paper-scissors model for accessibility.
+
+Stage 2: Intermediate Math Concepts and Strategy
+Next Card Set: Gradually introduce division, fractions, and percentages.
+Advanced Type Dynamics: Implement more complex interactions between types, possibly based on the prime factors of their stats.
+Special Moves: Introduce moves that involve simple fractions or percentages, using the prime factors of the attack/defense values.
+Enhanced Strategy Elements: Include cards with effects based on specific binary outcomes (e.g., '010' activates a special defense).
+
+Stage 3: Advanced Math and Enhanced Gameplay
+Complex Card Set: Focus on more challenging mathematical concepts and strategic depth.
+Fractional and Percentage-Based Moves: Incorporate moves that require calculating fractions and percentages of stats.
+Conditional Abilities: Introduce abilities that activate under specific game conditions, preparing for basic coding concepts.
+Complex Type Dynamics: Deepen the strategy involved in type matchups, possibly influenced by prime factorization.
+
+Stage 4: Basic Coding Concepts and Advanced Strategy
+Final Card Set: Introduce basic programming concepts alongside advanced math.
+Variables: Cards that act as variables, affecting stats or game conditions.
+Loops and Conditions: Abilities that mimic loops and conditional statements in programming, offering advanced strategic options.
+This progression ensures a solid foundation in basic math skills while gradually introducing more complex concepts. By starting with multiplication and the three-bit roll, you establish the core mechanics early on. As players advance, they encounter increasingly sophisticated mathematical challenges and strategic considerations, culminating in an introduction to basic coding principles.
+
+
+Variables
+Card Example: Variable Vanguard
+
+Ability: This card's attack value is a 'variable' that changes based on the number of cards in your hand.
+Mechanic: At the beginning of your turn, the attack value of Variable Vanguard is set to the number of cards in your hand.
+Educational Aspect: This teaches the concept of a variable as something that can hold different values at different times.
+Loops
+Card Example: Loop Lancer
+
+Ability: Once per turn, you can re-flip one of the binary roll coins. Continue re-flipping until you get tails, but you must stop after a maximum of three flips.
+Mechanic: This simulates a 'while' loop in coding with a condition (getting tails) and a limit to prevent an infinite loop.
+Educational Aspect: Players learn about loop structures and the importance of having a condition to end the loop.
+Conditions
+Card Example: Conditional Conqueror
+
+Ability: If your health is less than or equal to 5, this card gains double attack value.
+Mechanic: This card has a conditional statement that checks the player's health and modifies the card’s attack value accordingly.
+Educational Aspect: This introduces 'if-then' logic, a fundamental concept in programming.
+Integration in Gameplay
+Variables: Players must keep track of changing values, making decisions based on these 'variables'. For example, using Variable Vanguard effectively requires strategic hand management.
+Loops: Loop Lancer adds an element of chance and risk-reward decision-making. Players must decide when to stop re-flipping to maximize benefits without exceeding the loop limit.
+Conditions: Conditional Conqueror requires players to carefully monitor their health and possibly make strategic decisions to lower it to trigger the card's ability.
